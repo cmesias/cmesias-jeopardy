@@ -1,0 +1,67 @@
+/*
+  You don't need to touch this file to complete the assignment!
+  Unless you want to add styles and make it look more beautiful.
+*/
+
+/*
+  Some colors you may find useful:
+  #115ff4
+  #060ce9
+  #28a200
+  #8d2ab5
+  #74119c
+*/
+
+* {
+  box-sizing: border-box;
+  padding: 0px;
+  margin: 0px;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+body {
+  background-color: darkcyan;
+}
+
+.disabled
+{
+  display: none;
+}
+
+.viewed
+{
+  text-decoration: line-through;
+}
+
+table {
+  background-color: black;
+  padding: 8px;
+}
+
+th {
+  padding: 16px;
+  border: 2px solid black;
+  background-color: darkblue;
+  color: white;
+}
+
+td {
+  padding: 16px;
+  background-color: darkblue;
+  border: 1px solid black;
+  color: orange;
+}
+
+#active-clue {
+  border: red solid 2px;
+  width: 500px;
+  height: 300px;
+}
+
+td:hover {
+  border: 1px solid rgb(174, 46, 0);
+}
+
+td:active {
+  border: 1px solid rgb(249, 181, 156);
+}
