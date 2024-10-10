@@ -1,1 +1,10 @@
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
+
+
+How to add event listener to dynamic class
+- https://stackoverflow.com/questions/23852067/jquery-click-function-not-working-on-class
+- https://api.jquery.com/on/
+
+Get value of clicked event
+- https://stackoverflow.com/questions/5205411/get-value-of-an-attribute-of-the-clicked-element
+- https://developer.mozilla.org/en-US/docs/Web/API/Event/currentTarget
