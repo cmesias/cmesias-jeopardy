@@ -23,11 +23,6 @@ body {
   background-color: darkcyan;
 }
 
-.disabled
-{
-  display: none;
-}
-
 .viewed
 {
   text-decoration: line-through;
@@ -47,15 +42,68 @@ th {
 
 td {
   padding: 16px;
-  background-color: darkblue;
+  background-color: rgb(0, 0, 199);
   border: 1px solid black;
   color: orange;
 }
 
+.viewed {
+  background-color: rgb(0, 0, 79);
+}
+
 #active-clue {
+  position: fixed;
+  left: 20%;
+  top: 40%;
   border: red solid 2px;
-  width: 500px;
-  height: 300px;
+  width: 75%;
+  height: 400px;
+  background-color: aqua;
+  color: black;
+  justify-content: center;
+  align-items: center;
+}
+
+#active-clue:hover {
+  cursor: pointer;
+  color: white;
+  background-color: rgb(0, 173, 173);
+}
+
+#active-clue:active {
+  cursor: pointer;
+  color: white;
+  background-color: rgb(0, 93, 93);
+}
+
+.clue-question {
+  font-size: 2em;
+  padding: 32px;
+}
+
+.close-active {
+  color: black;
+  position: absolute;
+  right: 0;
+  top: 0;
+  border: red 1px solid;
+  width: 2rem;
+  height: 2rem;
+  text-align: center;
+  padding: 5px;
+  background-color: whitesmoke;
+}
+
+.close-active:hover {
+  background-color: grey;
+}
+
+.close-active:active {
+  background-color: rgb(87, 87, 87);
+}
+
+.disabled {
+  display: none;
 }
 
 td:hover {

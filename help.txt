@@ -8,3 +8,6 @@ How to add event listener to dynamic class
 Get value of clicked event
 - https://stackoverflow.com/questions/5205411/get-value-of-an-attribute-of-the-clicked-element
 - https://developer.mozilla.org/en-US/docs/Web/API/Event/currentTarget
+
+Get child by className
+- https://stackoverflow.com/questions/12166753/how-to-get-child-element-by-class-name

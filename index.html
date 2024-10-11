@@ -16,7 +16,7 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css"
     >
   </head>
-  <body>
+  <body class="clicking-outside">
     <h1>Jeopardy!</h1>
 
     <button id="play">
@@ -24,7 +24,7 @@
       Start the Game!
     </button>
 
-    <section>
+    <section class="clicking-outside">
 
         <table>
           <thead>
@@ -69,11 +69,13 @@
           </tbody>
         </table>
         
-      <div id="active-clue">
-        <!-- When a clue is clicked, show the question here. -->
-        <!-- When a question is clicked, show the answer here. -->
-        <!-- When the game ends, show it here. -->
-      </div>
+        <div id="active-clue" class="disabled">
+          <div class="close-active">x</div>
+          
+          <!-- When a clue is clicked, show the question here. -->
+          <!-- When a question is clicked, show the answer here. -->
+          <!-- When the game ends, show it here. -->
+        </div>
     </section>
 
     <div id="spinner" class="disabled">

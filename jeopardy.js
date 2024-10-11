@@ -54,7 +54,6 @@ const API_URL = "https://rithm-jeopardy.herokuapp.com/api/"; // The URL of the A
 const NUMBER_OF_CATEGORIES = 5; // The number of categories you will be fetching. You can change this number.
 const NUMBER_OF_CLUES_PER_CATEGORY = 5; // The number of clues you will be displaying per category. You can change this number.
 
-let categories = []; // The categories with clues fetched from the API.
 /*
 [
   {
@@ -73,6 +72,18 @@ let categories = []; // The categories with clues fetched from the API.
   ... more categories
 ]
  */
+let categories = []; // The categories with clues fetched from the API.
+
+/* 
+  All clues, it will have an array of objects with 'clue.question', and 'clue.answer': 
+  [
+    {question: 'Question', answer: "Im an answer"},
+    {question: 'Question', answer: "Im an answer"},
+    {question: 'Question', answer: "Im an answer"},
+    {question: 'Question', answer: "Im an answer"}
+  ]
+*/
+let clues = [];
 
 let activeClue = null; // Currently selected clue data.
 let activeClueMode = 0; // Controls the flow of #active-clue element while selecting a clue, displaying the question of selected clue, and displaying the answer to the question.
@@ -265,7 +276,18 @@ async function AppendClueToCategryColumn() {
         for (let clue of category.clues) {
           // Create td to store clue value
           const td = document.createElement('td');
-          td.innerText = `$${clue.value}`;  // "$100", "$500" /// td.innerText = clue.question;
+          td.innerText = `$${clue.value}`;  // "$100", "$500" /// td.innerText = clue.question; // console.log(`clue.question: ${clue.question}`)
+
+          // Store all clues in an object and append it it 'clues' array of objectts
+          const clue_object = {
+            id: clue.id,
+            question: clue.question,
+            answer: clue.answer,
+            value: clue.value
+          };
+
+          // Append to 'clues' array
+          clues.push(clue_object);
 
           // Add class 'clue' to 'td'
           td.classList.add(`clues`);
@@ -308,83 +330,139 @@ async function AppendClueToCategryColumn() {
       // After above function completes do this
     });
   });
+}
 
-  /**
-    * - TODO [ ] - To this row elements (tr) should add an event listener (handled by the `handleClickOfClue` function) 
-    *   and set their IDs with category and clue IDs. This will enable you to detect which clue is clicked.
-   */
+/**
+  * - TODO [ ] - To this row elements (tr) should add an event listener (handled by the `handleClickOfClue` function) 
+  *   and set their IDs with category and clue IDs. This will enable you to detect which clue is clicked.
+ */
 
-  // Listen for clicks on clues
-  $('table').on('click', '.clues', function (event) {
+// Listen for clicks on clues
+$('section').on('click', '.close-active', function () {
+  console.log(`clicking: close-active`)
 
-    // Represents the parent when clicking on the parent and when clicking inside its child
-    // const currentTarget = event.currentTarget.getAttribute("id");
+  // Get reference to #active-clue
+  const activeClueById = document.getElementById('active-clue');
 
-    // Usually the child inside a parent
-    const target = event.target.getAttribute("id");
+  // Toggle flex off
+  activeClueById.style.display = "";
 
-    handleClickOfClue(`value: ${value}`)
+  // Hide active clue
+  activeClueById.classList.add('disabled');
+
+  // Remove clue by child className using jQuery
+  $(activeClueById).children("." + 'clue-question').remove();
+});
+
+// Listen for clicks on clues
+$('table').on('click', '.clues', function (event) {
+
+  // [x] - todo mark clue as viewed (you can use the class in style.css), display the question at #active-clue
+  const target = event.target;
+  target.classList.add('viewed');   // Add class 'viewed' to 'td'
+
+  // Usually the child inside a parent
+  const clueId = event.target.getAttribute("id");
+
+  handleClickOfClue(clueId)
+});
+
+/**
+ * Manages the behavior when a clue is clicked.
+ * Displays the question if there is no active question.
+ *
+ * Hints:
+ * - Control the behavior using the `activeClueMode` variable.
+ * - Identify the category and clue IDs using the clicked element's ID.
+ * - Remove the clicked clue from categories since each clue should be clickable only once. Don't forget to remove the category if all the clues are removed.
+ * - Don't forget to update the `activeClueMode` variable.
+ *
+ */
+function handleClickOfClue(clueId) {
+
+  /* 
+     TODOs
+     [x] - show clue question when being clicked on
+     [ ] - find and remove the clue from the categories
+  */
+
+  // Get reference to #active-clue
+  const activeClueById = document.getElementById('active-clue');
+
+  // Remove clue by child className using jQuery
+  $(activeClueById).children("." + 'clue-question').remove();
+
+  // Get matching clue id and return questin as alert
+  const matchingClue = clues.find(function (clue) {
+    return clueId == clue.id;
   });
 
-  /**
-   * Manages the behavior when a clue is clicked.
-   * Displays the question if there is no active question.
-   *
-   * Hints:
-   * - Control the behavior using the `activeClueMode` variable.
-   * - Identify the category and clue IDs using the clicked element's ID.
-   * - Remove the clicked clue from categories since each clue should be clickable only once. Don't forget to remove the category if all the clues are removed.
-   * - Don't forget to update the `activeClueMode` variable.
-   *
-   */
-  function handleClickOfClue(event) {
-    console.log('event ', event);
+  // Create div for question
+  const div = document.createElement('div');
 
-    // show clue question when being clicked on
-    // const clues = document.querySelectorAll('.clue');
-    // console.log('clues: ', clues);
+  // Add clue question to div
+  div.innerText = matchingClue.question;
 
-    // clues.addEvenetListener('click', function(clue) {
+  // Give clue a class 'question'
+  div.classList.add('clue-question');
 
-    //   console.log('clue: ', clue);
-    //});
-    // todo find and remove the clue from the categories
+  // Append div to #active-clue
+  activeClueById.append(div);
 
-    // todo mark clue as viewed (you can use the class in style.css), display the question at #active-clue
+  // Toggle flex
+  activeClueById.style.display = "flex";
+
+  // Unhide active clue
+  activeClueById.classList.remove('disabled');
+
+  // Store active clue here
+  activeClue = {
+    question: matchingClue.question, 
+    answer: matchingClue.answer
+  };
+
+  // Set next mode for active clue
+  activeClueMode = 1;
+}
+
+$("#active-clue").on("click", handleClickOfActiveClue);
+
+/**
+ * Manages the behavior when a displayed question or answer is clicked.
+ * Displays the answer if currently displaying a question.
+ * Clears if currently displaying an answer.
+ *
+ * Hints:
+ * - Control the behavior using the `activeClueMode` variable.
+ * - After clearing, check the categories array to see if it is empty to decide to end the game.
+ * - Don't forget to update the `activeClueMode` variable.
+ */
+function handleClickOfActiveClue(event) {
+  console.log('clicking active-clue!');
+
+  // todo display answer if displaying a question
+
+  // todo clear if displaying an answer
+  // todo after clear end the game when no clues are left
+
+  if (activeClueMode === 1) {
+    activeClueMode = 2;
+    $("#active-clue").html(activeClue.answer);
   }
+  else if (activeClueMode === 2) {
+    activeClueMode = 0;
+    $("#active-clue").html(null);
+    // console.log(`$("#active-clue").html(null`);
+    // console.log(`categories.length ${categories.length}`);
 
-  $("#active-clue").on("click", handleClickOfActiveClue);
-
-  /**
-   * Manages the behavior when a displayed question or answer is clicked.
-   * Displays the answer if currently displaying a question.
-   * Clears if currently displaying an answer.
-   *
-   * Hints:
-   * - Control the behavior using the `activeClueMode` variable.
-   * - After clearing, check the categories array to see if it is empty to decide to end the game.
-   * - Don't forget to update the `activeClueMode` variable.
-   */
-  function handleClickOfActiveClue(event) {
-    // todo display answer if displaying a question
-
-    // todo clear if displaying an answer
-    // todo after clear end the game when no clues are left
-
-    if (activeClueMode === 1) {
-      activeClueMode = 2;
-      $("#active-clue").html(activeClue.answer);
-    }
-    else if (activeClueMode === 2) {
-      activeClueMode = 0;
-      $("#active-clue").html(null);
-
-      if (categories.length === 0) {
-        isPlayButtonClickable = true;
-        $("#play").text("Restart the Game!");
-        $("#active-clue").html("The End!");
-      }
+    if (categories.length === 0) {
+      console.log(`categories.length === 0`);
+      isPlayButtonClickable = true;
+      // $("#play").text("Restart the Game!");
+      $("#active-clue").html("The End!");
     }
   }
 }
 // });
+
+// TODO [ ] - need to find and remove category once all clues have been viewed under that category
