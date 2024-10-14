@@ -1,55 +1,15 @@
-// You only need to touch comments with the todo of this file to complete the assignment!
-
 /*
-=== How to build on top of the starter code? ===
-
-Problems have multiple solutions.
-We have created a structure to help you on solving this problem.
-On top of the structure, we created a flow shaped via the below functions.
-We left descriptions, hints, and to-do sections in between.
-If you want to use this code, fill in the to-do sections.
-However, if you're going to solve this problem yourself in different ways, you can ignore this starter code.
+ * TODOs 1
+ * [x] - todo show the spinner while setting up the game
+ * [x] - todo reset the DOM (table, button text, the end text)
+ * [x] - todo fetch the game data (categories with clues)
+ * [x] - todo fill the table
+ *
+ * TODOs 2
+ * [x] - show clue question when being clicked on
+ * [x] - find and remove the clue from the categories
  */
 
-/*
-=== Terminology for the API ===
-
-Clue: The name given to the structure that contains the question and the answer together.
-Category: The name given to the structure containing clues on the same topic.
- */
-
-/*
-=== Data Structure of Request the API Endpoints ===
-
-/categories:
-[
-  {
-    "id": <category ID>,
-    "title": <category name>,
-    "clues_count": <number of clues in the category where each clue has a question, an answer, and a value>
-  },
-  ... more categories
-]
-
-/category:
-{
-  "id": <category ID>,
-  "title": <category name>,
-  "clues_count": <number of clues in the category>,
-  "clues": [
-    {
-      "id": <clue ID>,
-      "answer": <answer to the question>,
-      "question": <question>,
-      "value": <value of the question (be careful not all questions have values) (Hint: you can assign your own value such as 200 or skip)>,
-      ... more properties
-    },
-    ... more clues
-  ]
-}
- */
-
-// document.addEventListener('DOMContentLoaded', function () {
 const API_URL = "https://rithm-jeopardy.herokuapp.com/api/"; // The URL of the API.
 const NUMBER_OF_CATEGORIES = 5; // The number of categories you will be fetching. You can change this number.
 const NUMBER_OF_CLUES_PER_CATEGORY = 5; // The number of clues you will be displaying per category. You can change this number.
@@ -77,10 +37,10 @@ let categories = []; // The categories with clues fetched from the API.
 /* 
   All clues, it will have an array of objects with 'clue.question', and 'clue.answer': 
   [
-    {question: 'Question', answer: "Im an answer", id: "1183", parentCategoryIdx: "3"},
-    {question: 'Question', answer: "Im an answer", id: "1183", parentCategoryIdx: "3"},
-    {question: 'Question', answer: "Im an answer", id: "1183", parentCategoryIdx: "3"},
-    {question: 'Question', answer: "Im an answer", id: "1183", parentCategoryIdx: "3"}
+    {question: 'Question 1', answer: "Im an answer 1", id: "1183"},
+    {question: 'Question 2', answer: "Im an answer 2", id: "632"},
+    {question: 'Question 3', answer: "Im an answer 3", id: "1"},
+    {question: 'Question 4', answer: "Im an answer 4", id: "42"}
   ]
 */
 let clues = [];
@@ -95,6 +55,69 @@ let activeClueMode = 0; // Controls the flow of #active-clue element while selec
 
 let isPlayButtonClickable = true; // Only clickable when the game haven't started yet or ended. Prevents the button to be clicked during the game.
 
+// bufferoverflow - use code to jailbreak ps4
+
+/**
+ * Sets up the game.
+ *
+ * 1. Cleans the game since the user can be restarting the game.
+ * 2. Get category IDs
+ * 3. For each category ID, get the category with clues.
+ * 4. Fill the HTML table with the game data.
+ *
+ * Hints:
+ * - The game play is managed via events.
+ */
+async function resetGame() {
+
+  // [ ] - clear thead
+
+  // [ ] - clear tbody
+
+  // [ ] - clear active-clue box
+
+  // [ ] - Create 'x' box inside 'active-clue' box
+  {
+    // Create this
+    // <div class="close-active">x</div>
+
+    // create div to close-active box
+    const div = document.createElement('div');
+
+    // add class 'close-active'
+    div.classList.add('close-active'); 
+
+    // add 'x' text
+    div.innerText = 'x';
+
+    // append to 'active-clue' box
+    const activeClueBoxById = document.getElementById('active-clue');
+    activeClueBoxById.append(div);
+  }
+
+  // [ ] - modify button text to 'Start The Game'
+  $("#play").text("Start the Game!");//
+
+}
+
+function Create5Rows() {
+
+  // Create amount of rows from 'NUMBER_OF_CATEGORIES' variable
+
+  for (let i = 0; i < NUMBER_OF_CATEGORIES; i++) {
+    // Get the table element in which you want to add row
+    let tbody = document.querySelector("tbody");
+
+    // Create a row using the inserRow() method and
+    // specify the index where you want to add the row
+    let row = tbody.insertRow(-1); // We are adding at the end
+
+    // Give each a group id name: "row_0", ..., "row_4"
+    row.setAttribute('id', `row_${i}`);
+  }
+}
+
+// Listen for 'Start the Game' button
 $("#play").on("click", handleClickOfPlay);
 
 /**
@@ -108,57 +131,15 @@ function handleClickOfPlay() {
   if (isPlayButtonClickable) {
     isPlayButtonClickable = false;
 
+    // Clear the table
+    resetGame()
+
     // Create 5 rows under table heads
     Create5Rows();
 
     // todo set the game up if the play button is clickable
     AppendClueToCategryColumn();
   }
-}
-
-function Create5Rows() {
-
-  ///////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////
-  // Create 5 rows
-  // Create amount of rows from NUMBER_OF_CATEGORIES variable
-
-  for (let i = 0; i < NUMBER_OF_CATEGORIES; i++) {
-    // Get the table element in which you want to add row
-    let tbody = document.querySelector("tbody");
-
-    // Create a row using the inserRow() method and
-    // specify the index where you want to add the row
-    let row = tbody.insertRow(-1); // We are adding at the end
-
-    // Give each a group id name: "row_0", ..., "row_4"
-    row.setAttribute('id', `row_${i}`);
-  }
-
-  // Create amount of rows from NUMBER_OF_CATEGORIES variable
-  ///////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////
-}
-
-/**
- * Sets up the game.
- *
- * 1. Cleans the game since the user can be restarting the game.
- * 2. Get category IDs
- * 3. For each category ID, get the category with clues.
- * 4. Fill the HTML table with the game data.
- *
- * Hints:
- * - The game play is managed via events.
- */
-async function setupTheGame() {
-  // [ ] - todo show the spinner while setting up the game
-
-  // [ ] - todo reset the DOM (table, button text, the end text)
-
-  // [ ] - todo fetch the game data (categories with clues)
-
-  // [ ] - todo fill the table
 }
 
 /**
@@ -284,8 +265,6 @@ async function AppendClueToCategryColumn() {
             answer: clue.answer,
             value: clue.value,
             id: clue.id,
-            parentCategoryIdx: category.id,
-            clueIndex: category.clues.indexOf(clue)
           };
 
           // Append to 'clues' array
@@ -334,15 +313,56 @@ async function AppendClueToCategryColumn() {
   });
 }
 
-// Listen for clicks on clues
+// Listen for clicks on 'x' out of active-clue box
 $('section').on('click', '.close-active', function () {
-  console.log(`clicking: close-active`)
+  
+  // Remove any questions
+  $('#active-clue .clue-question').remove();
 
-  // Get reference to #active-clue
-  const activeClueById = document.getElementById('active-clue');
+  // Remove any answers
+  $('#active-clue .clue-answer').remove();
 
-  // Hide active clue
-  activeClueById.classList.add('disabled');
+  // Check if clues exist
+  let cluesExist = categories.some(function (category) {
+    return category.clues.length > 0;
+  });
+
+  // If clues still exist, continue game
+  if (cluesExist)
+  {
+    // Get reference to #active-clue box
+    const activeClueBox = document.getElementById('active-clue');
+  
+    // Hide active clue
+    activeClueBox.classList.add('disabled');
+  
+    // Reset activeClueMode 0
+    activeClueMode = 0;
+  } 
+
+  // If no more clues exist, end the game
+  else {
+
+    alert('no more clues exist, the end 2!');
+
+    // Get reference to #active-clue box
+    const activeClueBox = document.getElementById('active-clue');
+  
+    // Hide active clue
+    activeClueBox.classList.add('disabled');
+
+    // Set play button clickable
+    isPlayButtonClickable = true;
+
+    // Remove 'clue-end' from active-clue box
+    $('#active-clue .clue-end').remove();
+
+    // Modify button to 'Restart the Game!'
+    $("#play").text("Restart the Game!");//
+
+    // Ovverides above 'activeClueMode' if we're at the last clue
+    activeClueMode = 0;
+  }
 });
 
 // Listen for clicks on clues
@@ -358,12 +378,21 @@ $('table').on('click', '.clues', function (event) {
   
   // If it doesn't exist, add 'viewed' class and add it to activeClue
   else {
-    target.classList.add('viewed');   // Add class 'viewed' to 'td'
+
+    // Clear question from active-clue box when viewing a clue
+    $("#active-clue .clue-question").remove();
+
+    // Add class 'viewed' to 'td'
+    target.classList.add('viewed');   
   
     // Usually the child inside a parent
     const clueId = event.target.getAttribute("id");
   
+    // Handle click of clue
     handleClickOfClue(clueId)
+
+    // Clear clue from category when viewed
+    removeClueFromCategory(activeClue);
   }
 });
 
@@ -376,16 +405,12 @@ $('table').on('click', '.clues', function (event) {
  * - Identify the category and clue IDs using the clicked element's ID.
  * - Remove the clicked clue from categories since each clue should be clickable only once. Don't forget to remove the category if all the clues are removed.
  * - Don't forget to update the `activeClueMode` variable.
- * 
- * TODOs
- *   [x] - show clue question when being clicked on
- *   [x] - find and remove the clue from the categories
  *
  */
 function handleClickOfClue(clueId) {
 
-  // Get reference to #active-clue
-  const activeClueById = document.getElementById('active-clue');
+  // Get reference to #active-clue box
+  const activeClueBox = document.getElementById('active-clue');
 
   // Get clue object if matches
   const matchingClue = clues.find(function (clue) {
@@ -401,22 +426,17 @@ function handleClickOfClue(clueId) {
   // Give clue a class 'question'
   div.classList.add('clue-question');
 
-  // Append div to #active-clue
-  activeClueById.append(div);
+  // Append div to #active-clue box
+  activeClueBox.append(div);
 
-  // Toggle flex
-  // activeClueById.style.display = "flex";
-
-  // Unhide active clue
-  activeClueById.classList.remove('disabled');
+  // Unhide active clue box
+  activeClueBox.classList.remove('disabled');
 
   // Store active clue here
   activeClue = {
     question: matchingClue.question,
     answer: matchingClue.answer,
     id: matchingClue.id,
-    parentCategoryIdx: matchingClue.parentCategoryIdx,
-    clueIndex: matchingClue.clueIndex
   };
 
   // Set next mode for active clue
@@ -459,17 +479,19 @@ $("#active-clue").on("click", handleClickOfActiveClue);
  */
 function handleClickOfActiveClue(event) {
 
-  // todo clear if displaying an answer
+  // Remove clue question, then go to remove-answer mode
   if (activeClueMode === 1) {
+
+    // Set active clue mode to remove-answer mode
     activeClueMode = 2;
 
-    // remove question
+    // Remove question from active-clue box
     $("#active-clue .clue-question").remove();
 
     // add answer
     {
-      // Get reference to #active-clue
-      const activeClueById = document.getElementById('active-clue');
+      // Get reference to #active-clue box
+      const activeClueBox = document.getElementById('active-clue');
 
       // Create div for answer
       const div = document.createElement('div');
@@ -481,14 +503,19 @@ function handleClickOfActiveClue(event) {
       div.classList.add('clue-answer');
 
       // Append div to #active-clue
-      activeClueById.append(div);
+      activeClueBox.append(div);
     }
   }
 
   // Remove clue answer, and hide active-clue box
   else if (activeClueMode === 2) {
-    $("#active-clue .clue-answer").remove();
+    alert('no more clues exist, the end 1!');
+
+    // Set active clue mode to nothing mode
     activeClueMode = 0;
+
+    // Remove answer from active-clue box
+    $("#active-clue .clue-answer").remove();
 
     // Check if clues exist
     let cluesExist = categories.some(function (category) {
@@ -498,20 +525,52 @@ function handleClickOfActiveClue(event) {
     // If no more clues exist, end the game
     if (!cluesExist)
     {
+      // Set play button clickable
       isPlayButtonClickable = true;
-      $("#play").text("Restart the Game!");//
-      $("#active-clue").html("The End!");
-      alert('The End!');
+
+      // Create clue-end text
+      {
+        // <div class="clue-end">The End</div>
+        const div = document.createElement('div');
+        div.classList.add('clue-end');
+        div.innerText = 'The End!';
+
+        // append to active-clue box
+        const activeClueBox = document.getElementById('active-clue');
+        activeClueBox.append(div);
+      }
+
+      // Ovverides above 'activeClueMode' if we're at the last clue
+      activeClueMode = 3;
     } 
     
     // If clues still exist, hide #active-clue box
     else {
 
       // Get reference to #active-clue
-      const activeClueById = document.getElementById('active-clue');
+      const activeClueBox = document.getElementById('active-clue');
 
       // Hide active clue
-      activeClueById.classList.add('disabled');
+      activeClueBox.classList.add('disabled');
     }
+  }
+
+  // 'The End' mode
+  else if (activeClueMode === 3) {
+
+    // Get reference to #active-clue
+    const activeClueBox = document.getElementById('active-clue');
+    
+    // Hide active clue
+    activeClueBox.classList.add('disabled');
+
+    // Remove 'clue-end' from active-clue box
+    $('#active-clue .clue-end').remove();
+
+    // Modify button to 'Restart the Game!'
+    $("#play").text("Restart the Game!");//
+
+    // Default
+    activeClueMode = 0;
   }
 }
