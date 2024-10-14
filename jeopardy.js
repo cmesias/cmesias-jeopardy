@@ -77,10 +77,10 @@ let categories = []; // The categories with clues fetched from the API.
 /* 
   All clues, it will have an array of objects with 'clue.question', and 'clue.answer': 
   [
-    {question: 'Question', answer: "Im an answer"},
-    {question: 'Question', answer: "Im an answer"},
-    {question: 'Question', answer: "Im an answer"},
-    {question: 'Question', answer: "Im an answer"}
+    {question: 'Question', answer: "Im an answer", id: "1183", parentCategoryIdx: "3"},
+    {question: 'Question', answer: "Im an answer", id: "1183", parentCategoryIdx: "3"},
+    {question: 'Question', answer: "Im an answer", id: "1183", parentCategoryIdx: "3"},
+    {question: 'Question', answer: "Im an answer", id: "1183", parentCategoryIdx: "3"}
   ]
 */
 let clues = [];
@@ -280,10 +280,12 @@ async function AppendClueToCategryColumn() {
 
           // Store all clues in an object and append it it 'clues' array of objectts
           const clue_object = {
-            id: clue.id,
             question: clue.question,
             answer: clue.answer,
-            value: clue.value
+            value: clue.value,
+            id: clue.id,
+            parentCategoryIdx: category.id,
+            clueIndex: category.clues.indexOf(clue)
           };
 
           // Append to 'clues' array
@@ -332,11 +334,6 @@ async function AppendClueToCategryColumn() {
   });
 }
 
-/**
-  * - TODO [ ] - To this row elements (tr) should add an event listener (handled by the `handleClickOfClue` function) 
-  *   and set their IDs with category and clue IDs. This will enable you to detect which clue is clicked.
- */
-
 // Listen for clicks on clues
 $('section').on('click', '.close-active', function () {
   console.log(`clicking: close-active`)
@@ -344,14 +341,8 @@ $('section').on('click', '.close-active', function () {
   // Get reference to #active-clue
   const activeClueById = document.getElementById('active-clue');
 
-  // Toggle flex off
-  activeClueById.style.display = "";
-
   // Hide active clue
   activeClueById.classList.add('disabled');
-
-  // Remove clue by child className using jQuery
-  $(activeClueById).children("." + 'clue-question').remove();
 });
 
 // Listen for clicks on clues
@@ -359,12 +350,21 @@ $('table').on('click', '.clues', function (event) {
 
   // [x] - todo mark clue as viewed (you can use the class in style.css), display the question at #active-clue
   const target = event.target;
-  target.classList.add('viewed');   // Add class 'viewed' to 'td'
 
-  // Usually the child inside a parent
-  const clueId = event.target.getAttribute("id");
-
-  handleClickOfClue(clueId)
+  // Check if target already has 'viewed' class
+  if (target.classList.contains('viewed')) {
+    alert('Clue removed, you viewed it already!');
+  } 
+  
+  // If it doesn't exist, add 'viewed' class and add it to activeClue
+  else {
+    target.classList.add('viewed');   // Add class 'viewed' to 'td'
+  
+    // Usually the child inside a parent
+    const clueId = event.target.getAttribute("id");
+  
+    handleClickOfClue(clueId)
+  }
 });
 
 /**
@@ -376,23 +376,18 @@ $('table').on('click', '.clues', function (event) {
  * - Identify the category and clue IDs using the clicked element's ID.
  * - Remove the clicked clue from categories since each clue should be clickable only once. Don't forget to remove the category if all the clues are removed.
  * - Don't forget to update the `activeClueMode` variable.
+ * 
+ * TODOs
+ *   [x] - show clue question when being clicked on
+ *   [x] - find and remove the clue from the categories
  *
  */
 function handleClickOfClue(clueId) {
 
-  /* 
-     TODOs
-     [x] - show clue question when being clicked on
-     [ ] - find and remove the clue from the categories
-  */
-
   // Get reference to #active-clue
   const activeClueById = document.getElementById('active-clue');
 
-  // Remove clue by child className using jQuery
-  $(activeClueById).children("." + 'clue-question').remove();
-
-  // Get matching clue id and return questin as alert
+  // Get clue object if matches
   const matchingClue = clues.find(function (clue) {
     return clueId == clue.id;
   });
@@ -410,21 +405,46 @@ function handleClickOfClue(clueId) {
   activeClueById.append(div);
 
   // Toggle flex
-  activeClueById.style.display = "flex";
+  // activeClueById.style.display = "flex";
 
   // Unhide active clue
   activeClueById.classList.remove('disabled');
 
   // Store active clue here
   activeClue = {
-    question: matchingClue.question, 
-    answer: matchingClue.answer
+    question: matchingClue.question,
+    answer: matchingClue.answer,
+    id: matchingClue.id,
+    parentCategoryIdx: matchingClue.parentCategoryIdx,
+    clueIndex: matchingClue.clueIndex
   };
 
   // Set next mode for active clue
   activeClueMode = 1;
 }
 
+// Remove clue from category
+function removeClueFromCategory(currentActiveClue) {
+  
+  // Get category index
+  const catIdx = categories.findIndex(function (category) {
+   
+    return category.clues.some(function (clue) {   // this will return the clue's corresponding categry index 
+      
+      return clue.id == currentActiveClue.id;     // returns true or false
+    });
+  })
+
+  // Get clue index
+  const clueIdx = categories[catIdx].clues.findIndex(function (clue) {
+    return clue.id == currentActiveClue.id;
+  });
+
+  // Remove clue from category
+  categories[catIdx].clues.splice(clueIdx, 1);
+}
+
+// Liste for #active-clue box clicks
 $("#active-clue").on("click", handleClickOfActiveClue);
 
 /**
@@ -438,31 +458,60 @@ $("#active-clue").on("click", handleClickOfActiveClue);
  * - Don't forget to update the `activeClueMode` variable.
  */
 function handleClickOfActiveClue(event) {
-  console.log('clicking active-clue!');
-
-  // todo display answer if displaying a question
 
   // todo clear if displaying an answer
-  // todo after clear end the game when no clues are left
-
   if (activeClueMode === 1) {
     activeClueMode = 2;
-    $("#active-clue").html(activeClue.answer);
-  }
-  else if (activeClueMode === 2) {
-    activeClueMode = 0;
-    $("#active-clue").html(null);
-    // console.log(`$("#active-clue").html(null`);
-    // console.log(`categories.length ${categories.length}`);
 
-    if (categories.length === 0) {
-      console.log(`categories.length === 0`);
+    // remove question
+    $("#active-clue .clue-question").remove();
+
+    // add answer
+    {
+      // Get reference to #active-clue
+      const activeClueById = document.getElementById('active-clue');
+
+      // Create div for answer
+      const div = document.createElement('div');
+
+      // Add clue question to div
+      div.innerText = activeClue.answer;
+
+      // Give clue a class 'question'
+      div.classList.add('clue-answer');
+
+      // Append div to #active-clue
+      activeClueById.append(div);
+    }
+  }
+
+  // Remove clue answer, and hide active-clue box
+  else if (activeClueMode === 2) {
+    $("#active-clue .clue-answer").remove();
+    activeClueMode = 0;
+
+    // Check if clues exist
+    let cluesExist = categories.some(function (category) {
+      return category.clues.length > 0;
+    });
+
+    // If no more clues exist, end the game
+    if (!cluesExist)
+    {
       isPlayButtonClickable = true;
-      // $("#play").text("Restart the Game!");
+      $("#play").text("Restart the Game!");//
       $("#active-clue").html("The End!");
+      alert('The End!');
+    } 
+    
+    // If clues still exist, hide #active-clue box
+    else {
+
+      // Get reference to #active-clue
+      const activeClueById = document.getElementById('active-clue');
+
+      // Hide active clue
+      activeClueById.classList.add('disabled');
     }
   }
 }
-// });
-
-// TODO [ ] - need to find and remove category once all clues have been viewed under that category
