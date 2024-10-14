@@ -68,15 +68,24 @@ let isPlayButtonClickable = true; // Only clickable when the game haven't starte
  * Hints:
  * - The game play is managed via events.
  */
-async function resetGame() {
+function resetGame() {
 
-  // [ ] - clear thead
+  // [x] - enable spinner
+  $('#spinner').removeClass('disabled');
 
-  // [ ] - clear tbody
+  // [x] - clear thead
+  $(".clicking-outside table thead #categories").html("");
 
-  // [ ] - clear active-clue box
+  // [x] - clear tbody
+  $(".clicking-outside table tbody").html("");
 
-  // [ ] - Create 'x' box inside 'active-clue' box
+  // [x] - clear active-clue box
+  $(".clicking-outside #active-clue").html("");
+
+  // [x] - hide active-clue box
+  $("#active-clue").addClass("disabled");
+
+  // [x] - Create 'x' box inside 'active-clue' box
   {
     // Create this
     // <div class="close-active">x</div>
@@ -311,6 +320,12 @@ async function AppendClueToCategryColumn() {
       // After above function completes do this
     });
   });
+
+  // If content loaded, show table
+  $('table').removeClass('disabled');
+
+  // If content loaded, disable spinner
+  $('#spinner').addClass('disabled');
 }
 
 // Listen for clicks on 'x' out of active-clue box
@@ -342,8 +357,6 @@ $('section').on('click', '.close-active', function () {
 
   // If no more clues exist, end the game
   else {
-
-    alert('no more clues exist, the end 2!');
 
     // Get reference to #active-clue box
     const activeClueBox = document.getElementById('active-clue');
@@ -509,7 +522,6 @@ function handleClickOfActiveClue(event) {
 
   // Remove clue answer, and hide active-clue box
   else if (activeClueMode === 2) {
-    alert('no more clues exist, the end 1!');
 
     // Set active clue mode to nothing mode
     activeClueMode = 0;
